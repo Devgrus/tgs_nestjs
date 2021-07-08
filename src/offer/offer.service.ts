@@ -30,7 +30,7 @@ export class OfferService {
     try {
       const offerDataJson = JSON.stringify(offerData);
       const res = await this.httpService
-        .post(`${apiUrl}estimation/all`, offerDataJson, {
+        .post(`${apiUrl}/estimation/all`, offerDataJson, {
           headers: {
             'Content-type': 'application/json',
             'x-api-key': apiKey,
