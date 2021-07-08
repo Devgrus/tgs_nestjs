@@ -1,4 +1,4 @@
 export class RatingDto {
-  readonly courseId: number;
+  readonly purchaseId: number;
   readonly rating: number;
 }
