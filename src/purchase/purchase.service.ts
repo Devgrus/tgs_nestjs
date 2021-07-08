@@ -7,7 +7,9 @@ import { Offre } from 'src/db/entities/offre.entity';
 import { CourseRepository } from 'src/db/repositories/course.repository';
 import { NoteRepository } from 'src/db/repositories/note.repository';
 import { OffreRepository } from 'src/db/repositories/offre.repository';
-import { PurchaseDto } from './purchaseDto';
+import { PurchaseDto } from './dto/purchase.dto';
+import { PurchaseRequireDto } from './dto/purchaseRequire.dto';
+import { PurchaseResponseDto } from './dto/purchaseResponse.dto';
 
 @Injectable()
 export class PurchaseService {
@@ -20,48 +22,9 @@ export class PurchaseService {
     @InjectRepository(NoteRepository)
     private noteRepository: NoteRepository,
   ) {}
-  async purchase(purchaseData: PurchaseDto) {
+  async purchase(purchaseData: PurchaseDto): Promise<PurchaseResponseDto> {
     try {
-      // interface OfferType {
-      //   fromLatitdue: number;
-      //   fromLongitude: number;
-      //   nbPassengers: number;
-      //   toLatitdue: number;
-      //   toLongitude: number;
-      //   startDate?: string;
-      // }
-      // const purchaseToOffer: OfferType = {
-      //   fromLatitdue: purchaseData.fromAddress.latitude,
-      //   fromLongitude: purchaseData.fromAddress.longitude,
-      //   nbPassengers: purchaseData.nbPassengers,
-      //   toLatitdue: purchaseData.toAddress.latitude,
-      //   toLongitude: purchaseData.toAddress.longitude,
-      // };
-      // if (purchaseData.startDate) {
-      //   purchaseToOffer.startDate = purchaseData.startDate;
-      // }
-      // const getOfferData = await this.httpService
-      //   .post('http://localhost:3000/offer', purchaseToOffer)
-      //   .pipe()
-      //   .toPromise();
-      // console.log(getOfferData);
-      interface PostDataType {
-        clientId: string;
-        fromAddress: {
-          latitude: number;
-          longitude: number;
-        };
-        nbPassengers: number;
-        paymentMethod: string;
-        toAddress: {
-          latitude: number;
-          longitude: number;
-        };
-        vehicleType: string;
-        willBePaidInCash: boolean;
-        startDate?: string;
-      }
-      const sendData: PostDataType = {
+      const sendData: PurchaseRequireDto = {
         clientId: purchaseData.clientId,
         fromAddress: purchaseData.fromAddress,
         nbPassengers: purchaseData.nbPassengers,
@@ -71,7 +34,17 @@ export class PurchaseService {
         willBePaidInCash: purchaseData.willBePaidInCash,
       };
       if (purchaseData.startDate) {
-        sendData.startDate = purchaseData.startDate;
+        // 30 min restriction
+        if (
+          new Date(purchaseData.startDate).getTime() <
+          new Date().setMinutes(new Date().getMinutes() + 30)
+        ) {
+          throw new BadRequestException(
+            'Reservation must start in minimum 30 minutes',
+          );
+        } else {
+          sendData.startDate = purchaseData.startDate;
+        }
       }
       const purchaseDataJson = JSON.stringify(sendData);
       console.log(purchaseDataJson);
@@ -84,7 +57,8 @@ export class PurchaseService {
         })
         .toPromise();
       const resData = res.data;
-      console.log(resData);
+
+      // insert datas in offre entity
       const offreDB = new Offre();
       offreDB.distance = purchaseData.distance;
       offreDB.duration = purchaseData.duration;
@@ -93,27 +67,48 @@ export class PurchaseService {
       offreDB.price = resData.estimatedPrice;
       await this.offreRepository.save(offreDB);
 
+      // insert datas in note entity
       const noteDB = new Note();
       noteDB.rating = null;
       await this.noteRepository.save(noteDB);
 
-      const purchaseDB = new Course();
-      purchaseDB.fromAddress = JSON.stringify(resData.fromAddress);
-      purchaseDB.toAddress = JSON.stringify(resData.toAddress);
-      purchaseDB.userId = resData.client.userId;
-      purchaseDB.offre = offreDB;
-      purchaseDB.note = noteDB;
-      await this.courseRepository.save(purchaseDB);
+      //transform startDate (YYYY-MM-DD HH:MM)
+      const year = new Date(resData.startDate).getFullYear();
+      const month = new Date(resData.startDate).getMonth() + 1;
+      const date = new Date(resData.startDate).getDate();
+      const hour = new Date(resData.startDate).getHours();
+      const minute = new Date(resData.startDate).getMinutes();
+      const dateTransform =
+        [
+          year,
+          month < 10 ? '0' + month : month,
+          date < 10 ? '0' + date : date,
+        ].join('-') +
+        ' ' +
+        [
+          hour < 10 ? '0' + hour : hour,
+          minute < 10 ? '0' + minute : minute,
+        ].join(':');
+      resData.startDate = dateTransform;
 
-      const getData = await this.courseRepository
-        .createQueryBuilder('course')
-        .leftJoinAndSelect('course.offre', 'offre')
-        .leftJoinAndSelect('course.note', 'note')
-        .getMany();
-      console.log(getData);
+      // insert datas in course entity
+      const courseDB = new Course();
+      courseDB.fromAddress = JSON.stringify(resData.fromAddress);
+      courseDB.toAddress = JSON.stringify(resData.toAddress);
+      courseDB.userId = resData.client.userId;
+      courseDB.offre = offreDB;
+      courseDB.note = noteDB;
+      courseDB.startDate = dateTransform;
+      await this.courseRepository.save(courseDB);
 
-      const resDataJson = JSON.stringify(resData);
-      return resDataJson;
+      // return data
+      const purchaseResponse: PurchaseResponseDto = {
+        fromAddress: resData.fromAddress,
+        toAddress: resData.toAddress,
+        startDate: resData.startDate,
+        estimatedPrice: resData.estimatedPrice,
+      };
+      return purchaseResponse;
     } catch (err) {
       throw new BadRequestException(err.message);
     }
