@@ -1,29 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseRepository } from 'src/db/repositories/course.repository';
-import { NoteRepository } from 'src/db/repositories/note.repository';
-import { OffreRepository } from 'src/db/repositories/offre.repository';
-import { HistoryDto } from './historyDto';
+import { HistoryDto } from './dto/history.dto';
+import { HistoryResponseDto } from './dto/historyResponse.dto';
 
 @Injectable()
 export class HistoryService {
   constructor(
-    @InjectRepository(OffreRepository)
-    private offreRepository: OffreRepository,
     @InjectRepository(CourseRepository)
     private courseRepository: CourseRepository,
-    @InjectRepository(NoteRepository)
-    private noteRepository: NoteRepository,
   ) {}
 
-  async history(historyData: HistoryDto) {
+  async getHistory(historyData: HistoryDto): Promise<HistoryResponseDto> {
     try {
       const findAllInfo = await this.courseRepository.findOne({
-        where: { id: historyData.courseId },
+        where: { id: historyData.purchaseId },
         relations: ['note', 'offre'],
       });
-      const history = {
-        courseId: findAllInfo.id,
+      const historyResponse: HistoryResponseDto = {
+        purchaseId: findAllInfo.id,
         userId: findAllInfo.userId,
         distance: findAllInfo.offre.distance,
         duration: findAllInfo.offre.duration,
@@ -33,10 +28,11 @@ export class HistoryService {
         vehicle: findAllInfo.offre.vehicleType,
         price: findAllInfo.offre.price,
         rating: findAllInfo.note.rating,
+        startDate: findAllInfo.startDate,
       };
-      return JSON.stringify(history);
+      return historyResponse;
     } catch (err) {
-      throw new Error(err);
+      throw new NotFoundException('purchaseId No Exist');
     }
   }
 }
