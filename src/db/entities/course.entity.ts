@@ -22,6 +22,9 @@ export class Course {
   @Column()
   userId: string;
 
+  @Column()
+  startDate: string;
+
   @OneToOne(() => Offre)
   @JoinColumn()
   offre: Offre;
