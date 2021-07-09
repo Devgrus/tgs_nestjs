@@ -38,7 +38,7 @@ $ npm run start:prod
   "nbPassengers": number,
   "toLatitude": number,
   "toLongitude": number,
-	"startDate"?: "YYYY-MM-DD HH:MM"
+  "startDate": string(YYYY-MM-DD HH:MM)
 }
 
 # Example
@@ -48,7 +48,7 @@ $ npm run start:prod
   "nbPassengers": 1,
   "toLatitude": 48.882719,
   "toLongitude": 2.322451,
-	"startDate": "2021-07-30 13:06"
+  "startDate": "2021-07-30 13:06"
 }
 ```
 
@@ -65,17 +65,17 @@ $ npm run start:prod
     "longitude": number
   },
   "nbPassengers": number,
-	"paymentMethod": string,
+  "paymentMethod": string,
   "toAddress": {
     "latitude": number,
     "longitude": number
   },
   "vehicleType": string,
-	"tripType": string,
-	"distance": number,
-	"duration": number,
+  "tripType": string,
+  "distance": number,
+  "duration": number,
   "willBePaidInCash": Boolean,
-  "startDate": string
+  "startDate": string(YYYY-MM-DD HH:MM)
 }
 
 # Example
@@ -86,17 +86,17 @@ $ npm run start:prod
     "longitude": 2.370615
   },
   "nbPassengers": 1,
-	"paymentMethod": "ON_BOARD",
+  "paymentMethod": "ON_BOARD",
   "toAddress": {
     "latitude": 48.882719,
     "longitude": 2.322451
   },
   "vehicleType": "PRIME",
-	"tripType": "RESERVATION",
-	"distance": 4609,
-	"duration": 1366,
+  "tripType": "RESERVATION",
+  "distance": 4609,
+  "duration": 1366,
   "willBePaidInCash": true,
-	"startDate": "2021-07-30 12:00"
+  "startDate": "2021-07-30 12:00"
 }
 ```
 
@@ -105,14 +105,14 @@ $ npm run start:prod
 ```bash
 # JSON file
 {
-	"purchaseId": number,
-	"rating": number(1 || 2 || 3 || 4 || 5)
+  "purchaseId": number,
+  "rating": number(1 || 2 || 3 || 4 || 5)
 }
 
 # Example
 {
-	"purchaseId": 1,
-	"rating": 5
+  "purchaseId": 1,
+  "rating": 5
 }
 ```
 
