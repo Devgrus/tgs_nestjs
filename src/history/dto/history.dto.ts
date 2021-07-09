@@ -1,3 +1,6 @@
+import { IsString } from 'class-validator';
+
 export class HistoryDto {
-  readonly purchaseId: number;
+  @IsString()
+  readonly purchaseId: string;
 }
