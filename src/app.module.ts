@@ -6,7 +6,7 @@ import { PurchaseModule } from './purchase/purchase.module';
 import { RatingModule } from './rating/rating.module';
 import { HistoryModule } from './history/history.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { dbKey } from 'API';
+import { dbKey } from './../API';
 
 @Module({
   imports: [

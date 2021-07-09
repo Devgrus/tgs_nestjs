@@ -4,35 +4,33 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { AppController } from './../src/app.controller';
 import { AppService } from './../src/app.service';
-import { HistoryController } from './../src/history/history.controller';
+import { HistoryModule } from './../src/history/history.module';
 import { HistoryService } from './../src/history/history.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let historyService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [],
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
+      imports: [HistoryModule],
+    })
+      .overrideProvider(HistoryService)
+      .useValue(HistoryService)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
-  });
   it('/ (GETODAS2)', () => {
     return request(app.getHttpServer())
       .get('/history?purchaseId=1')
       .expect(200);
   });
-
+  afterAll(async () => {
+    await app.close();
+  });
   // const offerRequestData = {
   //   fromLatitude: 48.870377,
   //   fromLongitude: 2.370615,

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseRepository } from 'src/db/repositories/course.repository';
-import { NoteRepository } from 'src/db/repositories/note.repository';
-import { OffreRepository } from 'src/db/repositories/offre.repository';
+import { CourseRepository } from '../db/repositories/course.repository';
+import { NoteRepository } from '../db/repositories/note.repository';
+import { OffreRepository } from '../db/repositories/offre.repository';
 import { RatingController } from './rating.controller';
 import { RatingService } from './rating.service';
 

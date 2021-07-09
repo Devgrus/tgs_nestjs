@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CourseRepository } from 'src/db/repositories/course.repository';
+import { CourseRepository } from '../db/repositories/course.repository';
 import { HistoryController } from './history.controller';
 import { HistoryService } from './history.service';
 
