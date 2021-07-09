@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CourseRepository } from 'src/db/repositories/course.repository';
+import { CourseRepository } from '../db/repositories/course.repository';
 import { HistoryDto } from './dto/history.dto';
 import { HistoryResponseDto } from './dto/historyResponse.dto';
 
@@ -14,7 +14,7 @@ export class HistoryService {
   async getHistory(historyData: HistoryDto): Promise<HistoryResponseDto> {
     try {
       const findAllInfo = await this.courseRepository.findOne({
-        where: { id: historyData.purchaseId },
+        where: { id: +historyData.purchaseId },
         relations: ['note', 'offre'],
       });
       const historyResponse: HistoryResponseDto = {

@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CourseRepository } from 'src/db/repositories/course.repository';
-import { NoteRepository } from 'src/db/repositories/note.repository';
+import { CourseRepository } from '../db/repositories/course.repository';
+import { NoteRepository } from '../db/repositories/note.repository';
 import { RatingDto } from './dto/rating.dto';
 
 @Injectable()
@@ -27,9 +27,13 @@ export class RatingService {
         throw new BadRequestException('Acceptable rating values are 1,2,3,4,5');
       }
       const courseInfo = await this.courseRepository.findOne({
-        where: { id: ratingData.purchaseId },
+        where: { id: ratingData.rating },
         relations: ['note'],
       });
+      // if purchaseId does not exist
+      if (!courseInfo) {
+        throw new BadRequestException('PurchaseId Not Exist');
+      }
       const newRating = await this.noteRepository.findOne({
         where: { id: courseInfo.note.id },
       });
@@ -44,7 +48,8 @@ export class RatingService {
       if (err.status === 400) {
         throw new BadRequestException(err.message);
       }
-      throw new BadRequestException('purchaseId Not Exist');
+      // throw new BadRequestException('purchaseId Not Exist');
+      throw new BadRequestException(err.message);
     }
   }
 }

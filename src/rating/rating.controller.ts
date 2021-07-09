@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 import { RatingService } from './rating.service';
 import { RatingDto } from './dto/rating.dto';
 
@@ -7,7 +7,9 @@ export class RatingController {
   constructor(private readonly ratingService: RatingService) {}
 
   @Post()
-  rating(@Body() ratingData: RatingDto): Promise<RatingDto> {
+  rating(
+    @Body() ratingData: RatingDto,
+  ): Promise<RatingDto> | Promise<BadRequestException> {
     return this.ratingService.rating(ratingData);
   }
 }

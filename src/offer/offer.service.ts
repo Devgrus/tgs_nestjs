@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { apiKey, apiUrl } from 'API';
+import { apiKey, apiUrl } from '../../API';
 import { OfferDto } from './dto/offer.dto';
 import { OfferResponseDto } from './dto/offerResponse.dto';
 
