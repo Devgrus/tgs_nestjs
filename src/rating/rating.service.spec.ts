@@ -4,6 +4,8 @@ import { Course } from './../db/entities/course.entity';
 import { Note } from './../db/entities/note.entity';
 import { RatingService } from './rating.service';
 
+jest.setTimeout(30000);
+
 const mockCourseValue = {
   id: 1,
   fromAddress:

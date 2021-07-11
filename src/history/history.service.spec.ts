@@ -3,6 +3,8 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Course } from './../db/entities/course.entity';
 import { HistoryService } from './history.service';
 
+jest.setTimeout(30000);
+
 const mockCourseValue = {
   id: 1,
   fromAddress:

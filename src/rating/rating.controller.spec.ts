@@ -5,6 +5,8 @@ import { Note } from './../db/entities/note.entity';
 import { RatingController } from './rating.controller';
 import { RatingService } from './rating.service';
 
+jest.setTimeout(30000);
+
 describe('RatingService', () => {
   let service: RatingService;
   let controller: RatingController;

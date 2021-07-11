@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OfferController } from './offer.controller';
 import { OfferService } from './offer.service';
 
+jest.setTimeout(30000);
+
 const data = {
   fromLatitude: 48.870377,
   fromLongitude: 2.370615,

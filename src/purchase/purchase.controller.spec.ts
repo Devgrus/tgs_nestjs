@@ -7,6 +7,8 @@ import { Course } from './../db/entities/course.entity';
 import { HttpModule } from '@nestjs/common';
 import { PurchaseController } from './purchase.controller';
 
+jest.setTimeout(30000);
+
 const data = {
   clientId: '37f3dab9-34e2-4d6c-ad8c-2806e1ce4f18',
   fromAddress: {
