@@ -27,7 +27,7 @@ export class RatingService {
         throw new BadRequestException('Acceptable rating values are 1,2,3,4,5');
       }
       const courseInfo = await this.courseRepository.findOne({
-        where: { id: ratingData.rating },
+        where: { id: ratingData.purchaseId },
         relations: ['note'],
       });
       // if purchaseId does not exist
