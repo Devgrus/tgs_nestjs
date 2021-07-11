@@ -45,10 +45,6 @@ export class RatingService {
       };
       return ratingResponse;
     } catch (err) {
-      if (err.status === 400) {
-        throw new BadRequestException(err.message);
-      }
-      // throw new BadRequestException('purchaseId Not Exist');
       throw new BadRequestException(err.message);
     }
   }

@@ -52,10 +52,7 @@ export class OfferService {
 
       return res.data;
     } catch (err) {
-      if (err.status === 400) {
-        throw new BadRequestException(err.message);
-      }
-      throw new Error('Internal Error');
+      throw new BadRequestException(err.message);
     }
   }
 }

@@ -5,7 +5,6 @@ import { Note } from './../db/entities/note.entity';
 import { Offre } from './../db/entities/offre.entity';
 import { Course } from './../db/entities/course.entity';
 import { HttpModule } from '@nestjs/common';
-import { PurchaseController } from './purchase.controller';
 
 const data = {
   clientId: '37f3dab9-34e2-4d6c-ad8c-2806e1ce4f18',
@@ -24,7 +23,7 @@ const data = {
   distance: 4609,
   duration: 1366,
   willBePaidInCash: true,
-  startDate: '2021-07-30 12:00',
+  startDate: '2022-11-30 12:12',
 };
 
 const resultData = {
@@ -44,12 +43,12 @@ const resultData = {
     latitude: 48.88272,
     longitude: 2.32245,
   },
-  startDate: '2021-07-30 12:00',
+  startDate: '2022-11-30 12:12',
   estimatedPrice: 16,
 };
 
 describe('PurchaseService', () => {
-  let controller: PurchaseController;
+  let service: PurchaseService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
@@ -74,24 +73,26 @@ describe('PurchaseService', () => {
           },
         },
       ],
-      controllers: [PurchaseController],
     }).compile();
 
-    controller = module.get(PurchaseController);
+    service = module.get<PurchaseService>(PurchaseService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('should return resultData', async () => {
+    const res = await service.purchase(data);
+    expect(res).toEqual(resultData);
   });
   it('should return resultData', async () => {
-    const res = await controller.purchase(data);
+    data.startDate = '2023-01-01 01:01';
+    resultData.startDate = '2023-01-01 01:01';
+    const res = await service.purchase(data);
     expect(res).toEqual(resultData);
   });
   it('should return Error(bad startDate)', async () => {
     data.startDate = '2021-01-01 01:01';
 
     try {
-      await controller.purchase(data);
+      await service.purchase(data);
     } catch (err) {
       expect(err.status).toBe(400);
     }

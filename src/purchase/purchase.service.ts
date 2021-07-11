@@ -42,12 +42,10 @@ export class PurchaseService {
           throw new BadRequestException(
             'Reservation must start in minimum 30 minutes',
           );
-        } else {
-          sendData.startDate = purchaseData.startDate;
         }
+        sendData.startDate = purchaseData.startDate;
       }
       const purchaseDataJson = JSON.stringify(sendData);
-      console.log(purchaseDataJson);
       const res = await this.httpService
         .post(`${apiUrl}/trips/new`, purchaseDataJson, {
           headers: {

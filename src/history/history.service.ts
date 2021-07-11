@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CourseRepository } from '../db/repositories/course.repository';
 import { HistoryDto } from './dto/history.dto';
@@ -32,7 +32,7 @@ export class HistoryService {
       };
       return historyResponse;
     } catch (err) {
-      throw new NotFoundException('purchaseId No Exist');
+      throw new BadRequestException('purchaseId No Exist');
     }
   }
 }

@@ -21,7 +21,7 @@ export class PurchaseDto {
   @IsNumber()
   readonly nbPassengers: number;
   @IsString()
-  readonly paymentMethod: Payment;
+  readonly paymentMethod: string;
   @IsObject()
   readonly toAddress: {
     readonly latitude: number;

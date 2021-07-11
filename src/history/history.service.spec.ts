@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Course } from './../db/entities/course.entity';
-import { HistoryController } from './history.controller';
 import { HistoryService } from './history.service';
 
 const mockCourseValue = {
@@ -52,7 +51,7 @@ const data = {
 };
 
 describe('HistoryService', () => {
-  let controller: HistoryController;
+  let service: HistoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,15 +64,37 @@ describe('HistoryService', () => {
           },
         },
       ],
-      controllers: [HistoryController],
     }).compile();
 
-    controller = module.get(HistoryController);
+    service = module.get<HistoryService>(HistoryService);
   });
 
   it('should return data', async () => {
-    expect(await controller.getHistory({ purchaseId: '1' })).toStrictEqual(
-      data,
-    );
+    expect(await service.getHistory({ purchaseId: '1' })).toStrictEqual(data);
+  });
+
+  let service2: HistoryService;
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        HistoryService,
+        {
+          provide: getRepositoryToken(Course),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+      ],
+    }).compile();
+
+    service2 = module.get<HistoryService>(HistoryService);
+  });
+
+  it('should return data', async () => {
+    try {
+      await service2.getHistory({ purchaseId: '2000' });
+    } catch (err) {
+      expect(err.status).toBe(400);
+    }
   });
 });
